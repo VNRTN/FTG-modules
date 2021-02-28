@@ -9,4 +9,4 @@ class LinkInTextMod(loader.Module):
 		await message.edit(f'LOL')
         await message.edit(f'LOL1')
         await message.edit(f'LOL2')
-        await message.edit(f'LOL3')
+        await message.edit(f'LOL3!')
