@@ -1,5 +1,6 @@
 from .. import loader, utils
 
+
 	async def litcmd(self, message):
 		text = utils.get_args_raw(message)
 		link=text.split(' ')[0]
