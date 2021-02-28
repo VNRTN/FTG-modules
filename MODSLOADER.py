@@ -1,4 +1,4 @@
-from .. import loader, utils
+from .. import utils
 
 async def mldcmd(self, message):
 	text = utils.get_args_raw(message)
