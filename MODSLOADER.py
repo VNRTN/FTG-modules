@@ -7,3 +7,6 @@ class LinkInTextMod(loader.Module):
 	async def MLDcmd(self, message):
 		text = utils.get_args_raw(message)
 		await message.edit(f'LOL')
+        await message.edit(f'LOL1')
+        await message.edit(f'LOL2')
+        await message.edit(f'LOL3')
