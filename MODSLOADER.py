@@ -1,8 +1,8 @@
 from .. import loader, utils
 
 @loader.tds
-class mld(loader.Module):
-	strings = {"name": "MODSLOADER"}
+class LinkInTextMod(loader.Module):
+	strings = {"name": "Хуй знает"}
 	@loader.owner
 	async def mldcmd(self, message):
 		text = utils.get_args_raw(message)
