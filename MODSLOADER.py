@@ -1,7 +1,11 @@
-from .. import utils
+from .. import loader, utils
 
-async def mldcmd(self, message):
-	text = utils.get_args_raw(message)
-	await message.edit(f'LOL')
-	await sleep(8)
-	await message.edit(f'LOL1')
+@loader.tds
+class LinkInTextMod(loader.Module):
+	strings = {"name": "Хуй знает"}
+	@loader.owner
+	async def mldcmd(self, message):
+		text = utils.get_args_raw(message)
+		await message.edit(f'LOL')
+		await sleep(8)
+		await message.edit(f'LOL1')
