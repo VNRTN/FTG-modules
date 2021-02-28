@@ -1,10 +1,9 @@
 from .. import loader, utils
 
 @loader.tds
-class MODSLOADER(loader.Module):
+class mld(loader.Module):
 	strings = {"name": "MODSLOADER"}
 	@loader.owner
-	async def MLDcmd(self, message):
+	async def mldcmd(self, message):
 		text = utils.get_args_raw(message)
 		await message.edit(f'LOL')
-		await message.edit(f'LOL1')
