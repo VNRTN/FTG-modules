@@ -2,6 +2,7 @@ import random
 import logging
 from .. import loader, utils
 from random import randint, choice
+from asyncio import sleep
 logger = logging.getLogger(__name__)
 
 
