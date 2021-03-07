@@ -532,8 +532,8 @@ class ArtsMod(loader.Module):
                                         "╚═╝░░░░")
 
 
-	async def heartscmd(self, message):
-		for _ in range(10):
-			for heart in ['❤', '️🧡', '💛', '💚', '💙', '💜']:
-				await message.edit(heart)
-				await sleep(0.3)
+    async def heartscmd(self, message):
+        for _ in range(10):
+            for heart in ['❤', '️🧡', '💛', '💚', '💙', '💜']:
+                await message.edit(heart)
+                await sleep(0.3)
