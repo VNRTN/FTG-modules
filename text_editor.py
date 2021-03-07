@@ -142,11 +142,11 @@ class TextEditorMod(loader.Module):
         else:
             return await message.edit("Это не текст.")
 
-	async def litcmd(self, message):
-		text = utils.get_args_raw(message)
-		link=text.split(' ')[0]
-		text=text.split(' ')[1]
-		await message.edit(f'<a href="{link}">{text}</a>')
+    async def litcmd(self, message):
+        text = utils.get_args_raw(message)
+        link=text.split(' ')[0]
+        text=text.split(' ')[1]
+        await message.edit(f'<a href="{link}">{text}</a>')
 
 async def update_message(message, m, entities):
     try:
