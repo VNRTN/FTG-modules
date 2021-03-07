@@ -14,7 +14,11 @@ def register(cb):
 
 
 class CuMod(loader.Module):
-    strings = {'name': 'User utils'}
+    strings = {
+    'name': 'User utils'
+    'check': '<b>[CheckerAPI]</b> Делаем запрос к API...',
+    'response':'<b>[CheckerAPI]</b> Ответ API: <code>{}</code>\nВремя выполнения: <code>{}</code>'
+        }
 
     def __init__(self):
         self.name = self.strings['name']
@@ -26,44 +30,19 @@ class CuMod(loader.Module):
         self._client = client
         self.me = await client.get_me()
 
-    async def copycmd(self, message):
-        reply = await message.get_reply_message()
-        user = None
-        s = False
-        a = False
-        if utils.get_args_raw(message):
-            args = utils.get_args_raw(message).split(" ")
-            for i in args:
-                if "s" == i.lower():
-                    s = True
-                elif "а" == i.lower() or "a" == i.lower():
-                    a = True
-                else:
-                    try:
-                        user = await message.client.get_entity(i)
-                        break
-                    except:
-                        continue
-        if user == None and reply != None: user = reply.sender
-        if user == None and reply == None:
-            if not s: await message.edit("Кого?")
-            return
-        if s: await message.delete()
-        await message.delete()
-        if a:
-            avs = await message.client.get_profile_photos('me')
-            if len(avs) > 0:
-                await message.client(
-                    functions.photos.DeletePhotosRequest(await message.client.get_profile_photos('me')))
-        full = await message.client(GetFullUserRequest(user.id))
-        if full.profile_photo:
-            up = await message.client.upload_file(await message.client.download_profile_photo(user, bytes))
-            await message.client(functions.photos.UploadProfilePhotoRequest(up))
-        await message.client(UpdateProfileRequest(
-            user.first_name if user.first_name != None else "",
-            user.last_name if user.last_name != None else "",
-            full.about[:70] if full.about != None else ""
-        ))
+    async def checkcmd(self, m):
+        """ Проверить id на слитый номер
+        Жуёт либо <reply> либо <uid>
+        """
+        reply = await m.get_reply_message()
+        if utils.get_args_raw(m): user = utils.get_args_raw(m)
+        elif reply:
+            try: user = str(reply.sender.id)
+            except: return await m.edit("<b>Err</b>")    
+        else: return await m.edit("[CheckerAPI] А кого чекать?")
+        await m.edit(self.strings['check'])
+        r = requests.get('http://d4n13l3k00.ml/api/checkTgId?uid=' + user).json()
+        await m.edit(self.strings['response'].format(r['data'], str(round(r['time'], 3))+"ms"))
 
     async def userinfocmd(self, whos):
         await whos.edit("<b>Получаю информацию о пользователе...</b>")

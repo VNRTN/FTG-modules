@@ -5,8 +5,11 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 import io
+import os
 from io import BytesIO
 from textwrap import wrap
+from gsbl.stick_bug import StickBug
+from random import randrange as r
 
 backgrouds = ["https://raw.githubusercontent.com/Fl1yd/FTG-modules/master/stuff/impostor.png",
               "https://raw.githubusercontent.com/Fl1yd/FTG-modules/master/stuff/impostor2.png",
@@ -264,6 +267,44 @@ class ZapomniMod(loader.Module):
             out.seek(0)
             await message.client.send_file(message.to_id, out)
             await message.delete()
+
+    async def gsblcmd(self, event):
+        """Используй .gsbl <реплай на картинку/стикер>."""
+        try:
+            reply = await event.get_reply_message()
+            if not reply:
+                return await event.edit("Нет реплая на картинку/стикер.")
+            await event.edit("Минуточку...")
+            im = io.BytesIO()
+            await event.edit("Скачиваю...")
+            await event.client.download_file(reply, im)
+            await event.edit("Обрабатываю...")
+            im = Image.open(im)
+            sb = StickBug(im)
+            sb.save_video("get_stick_bugged_lol.mp4")
+            await event.edit("Отправляю...")
+            await event.client.send_file(event.to_id, open("get_stick_bugged_lol.mp4", "rb"), reply_to=reply)
+            os.remove("get_stick_bugged_lol.mp4")
+            await event.delete()
+        except:
+            return await event.edit("Это не картинка/стикер.")
+
+    async def haircmd(self, message):
+        """Волос!"""
+        reply = await message.get_reply_message()
+        if not reply: return await message.edit("Нет реплая на картинку/стикер.")
+        if reply.file.mime_type.split('/')[0] == "image":
+            im = Image.open(io.BytesIO(await message.client.download_file(reply, bytes)))
+            draw = ImageDraw.Draw(im)
+            w, h = im.size
+            draw.arc((r(w), r(h), r(w) + r(300), r(h) + r(550)), r(350), 180 + r(350), fill="black", width=1)
+            out = io.BytesIO()
+            out.name = f"witHair{reply.file.ext}"
+            im.save(out)
+            out.seek(0) 
+            await message.client.send_file(message.to_id, out, reply_to=reply.id if reply else None) 
+            await message.delete()
+        else: return await message.edit("Это не картинка/стикер.")
 
 def lol(background, image, cords, size):
     overlay = Image.open(BytesIO(image))

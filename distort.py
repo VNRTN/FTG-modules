@@ -1,4 +1,8 @@
-import logging, os
+# -*- coding: utf-8 -*-
+
+# requires: lottie cairosvg pillow wand
+
+import os
 from random import choice, randint
 import io
 from telethon.tl.types import DocumentAttributeFilename
@@ -7,15 +11,12 @@ from wand.image import Image
 from PIL import Image as IM
 from .. import loader, utils
 
-def register(cb):
-    cb(StickersDistortMod())
-
 
 logger = logging.getLogger(__name__)
 
 
 @loader.tds
-class StickersDistortMod(loader.Module):
+class DistortMod(loader.Module):
     """Stickers or photo distort"""
     strings = {"name": "Distort"}
 
@@ -58,7 +59,8 @@ class StickersDistortMod(loader.Module):
             reply_message = await message.get_reply_message()
             data, mime = await check_media(reply_message)
             if isinstance(data, bool):
-                await utils.answer(message, "<code>Reply to sticker or photo</code>")
+                await utils.answer(message, "<code>Reply to sticker or "
+                                            "photo</code>")
                 return
         else:
             await utils.answer(message, "<code>Reply to sticker or photo</code>")
@@ -91,6 +93,30 @@ class StickersDistortMod(loader.Module):
         await message.edit("<b>Sending...</b>")
         await message.client.send_file(message.to_id, out, reply_to=reply_message.id)
         await message.delete()
+
+    async def jpegdcmd(self, message):
+        """JPEG style distort"""
+        if message.is_reply:
+            reply_message = await message.get_reply_message()
+            data = await check_media(reply_message)
+            if isinstance(data, bool):
+                await message.delete()
+                return
+        else:
+            await message.delete()
+            return
+
+        image = io.BytesIO()
+        await message.client.download_media(data, image)
+        image = Image.open(image)
+        fried_io = io.BytesIO()
+        fried_io.name = "image.jpeg"
+        image = image.convert("RGB")
+        image.save(fried_io, "JPEG", quality=0)
+        fried_io.seek(0)
+        await message.delete()
+        await message.client.send_file(message.chat_id, fried_io,
+                                       reply_to=reply_message.id)
 
 
 async def distort(file, rescale_rate):
