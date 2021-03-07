@@ -15,7 +15,7 @@ def register(cb):
 
 class CuMod(loader.Module):
     strings = {
-    'name': 'User utils'
+    'name': 'User utils',
     'check': '<b>[CheckerAPI]</b> Делаем запрос к API...',
     'response': '<b>[CheckerAPI]</b> Ответ API: <code>{}</code>\nВремя выполнения: <code>{}</code>'
     }
