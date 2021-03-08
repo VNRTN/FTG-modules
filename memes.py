@@ -1,22 +1,15 @@
-import io
-import os
-import subprocess
-import random
-import requests
-import asyncio
-import logging
-import string
 from random import choice, randint
 from .. import loader, utils
+import requests
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
+import io
+import os
 from io import BytesIO
 from textwrap import wrap
-from gsbl.stick_bug import StickBug
 from random import randrange as r
-
-logger = logging.getLogger(__name__)
+from gsbl.stick_bug import StickBug
 
 backgrouds = ["https://raw.githubusercontent.com/Fl1yd/FTG-modules/master/stuff/impostor.png",
               "https://raw.githubusercontent.com/Fl1yd/FTG-modules/master/stuff/impostor2.png",
@@ -43,13 +36,10 @@ backgrouds = ["https://raw.githubusercontent.com/Fl1yd/FTG-modules/master/stuff/
 background = requests.get(f"{choice(backgrouds)}").content
 
 class ZapomniMod(loader.Module):
-	strings = {"name": "Memes",
-			   "reply": "Reply to video!",
-			   "error": "ERROR! TRY AGAIN!!",
-			   "processing": "DataDataMoshMosh!"}
+	strings = {'name': 'Memes'}
 
     def __init__(self):
-        self.name = self.strings["name"]
+        self.name = self.strings['name']
         self._me = None
         self._ratelimit = []
 
@@ -315,113 +305,6 @@ class ZapomniMod(loader.Module):
             await message.client.send_file(message.to_id, out, reply_to=reply.id if reply else None) 
             await message.delete()
         else: return await message.edit("Это не картинка/стикер.")
-
-    async def vshcmd(self, m):
-	    ".vsh <реплай на видео> <уровень от 1 до 6 (по умолчанию 3)>\
-	    \nСшакалить видео"
-	    lvls = {
-	        "1":"0.1M",
-	        "2":"0.08M",
-	        "3":"0.05M",
-	        "4":"0.03M",
-	        "5":"0.02M",
-	        "6":"0.01M"
-	    }
-	    reply = await m.get_reply_message()
-	    if not reply: return await m.edit("reply...")
-	    if reply.file.mime_type.split("/")[0]=="video":
-	        args = utils.get_args_raw(m)
-	        if args:
-	            if args in lvls:
-	                lvl = lvls[args]
-	            else:
-	                await message.edit("не знаю такого")
-	                return
-	        else:
-	            lvl = lvls["3"]
-	        await m.edit("[Шакал] Качаю...")
-	        vid = await reply.download_media("".join([random.choice(string.ascii_letters) for i in range(25)])+".mp4")
-	        out = "".join([random.choice(string.ascii_letters) for i in range(25)])+".mp4"
-	        await m.edit("[Шакал] Шакалю...")
-	        os.system(f"ffmpeg -y -i \"{vid}\" -b:v {lvl} -maxrate:v {lvl} -b:a {lvl} -maxrate:a {lvl} \"{out}\"")
-	        await m.edit("[Шакал] Отправляю...")
-	        await reply.reply(file=out)
-	        await m.delete()
-	        os.remove(vid)
-	        os.remove(out)
-	    else:
-	        await m.edit("shit...")
-	        return
-
-    async def datamoshcmd(self, message):
-        """. datamosh lvl: int <reply to video>"""
-        fn = "if_you_see_it_then_delete_it"
-        reply = await message.get_reply_message()
-        if not reply:
-            await message.edit("".join([ random.choice(html).format(ch) for ch in self.strings("reply", message)]))
-            return
-        if not reply.video:
-            await message.edit("".join([ random.choice(html).format(ch) for ch in self.strings("reply", message)]))
-            return
-        else:
-            await reply.download_media(fn+"1.mp4")
-        
-        lvl = 1
-        fp = False
-        args = utils.get_args(message)
-        if args:
-            if len(args) == 1:
-                if args[0].isdigit():
-                    lvl = int(args[0])
-                    if lvl <= 0:
-                        lvl = 1
-                else:
-                    fp = True
-            if len(args) > 1:
-                fp = True
-                if args[0].isdigit():
-                    lvl = int(args[0])
-                    if lvl <= 0:
-                        lvl = 1
-                elif args[1].isdigit():
-                    fp = True
-                    lvl = int(args[1])
-                    if lvl <= 0:
-                        lvl = 1
-
-        await message.edit("".join([ random.choice(html).format(ch) for ch in self.strings("processing", message)]))
-        subprocess.call(f'ffmpeg -loglevel quiet -y -i {fn}1.mp4 -crf 0 -bf 0 {fn}1.avi', shell=True)
-        try:
-            _f = open(fn+'1.avi', 'rb')
-            f_ = open(fn+'2.avi', 'wb')
-        except FileNotFoundError:
-            await message.edit("".join([ random.choice(html).format(ch) for ch in self.strings("error", message)]))
-            os.system(f"rm -f {fn}*")
-            return
-            
-        frs = _f.read().split(b'00dc')
-        fi = b'\x00\x01\xb0'
-        cf = 0
-        for _, fr in enumerate(frs):
-            if fp == False:
-                f_.write(fr + b'00dc')
-                cf += 1
-                if fr[5:8] == fi:
-                    fp = True
-            else:
-                if fr[5:8] != fi:
-                    cf += 1
-                    for i in range(lvl):
-                        f_.write(fr + b'00dc')
-        f_.close()
-        _f.close()
-        
-        subprocess.call(f'ffmpeg -loglevel quiet -y -i {fn}2.avi {fn}2.mp4', shell=True)
-        await reply.reply(file=fn+"2.mp4")
-        os.system(f"rm -f {fn}*")
-        await message.delete()
-        
-html = ["<b>{}<b>", "<code>{}</code>", "<i>{}</i>", "<del>{}</del>", "<u>{}</u>", '<a href="https://bruh.moment">{}</a>']
 
 def lol(background, image, cords, size):
     overlay = Image.open(BytesIO(image))
