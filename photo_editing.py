@@ -29,7 +29,7 @@ from PIL import Image, ImageOps as IO
 from io import BytesIO as ist
 
 @loader.tds
-class DistortMod(loader.Module):
+class PictureEditorMod(loader.Module):
     strings = {"name": "Picture editor"}
     f'{_R} фоточки'
 
