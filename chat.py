@@ -19,6 +19,7 @@ from telethon.errors import (UserIdInvalidError, UserNotMutualContactError, User
 from telethon.tl.types import (ChannelParticipantsAdmins, PeerChat, ChannelParticipantsBots)
 from userbot import bot
 import os
+
 logger = logging.getLogger(__name__)
 def register(cb):
     cb(TagAllMod())
@@ -37,6 +38,7 @@ class TagAllMod(loader.Module):
 
     async def client_ready(self, client, db):
         self.client = client
+        self.db = db
 
     async def statacmd(self, m):
         await m.edit("<b>Считаем...</b>")
@@ -436,6 +438,31 @@ class TagAllMod(loader.Module):
                 await message.delete()
         else:
             await message.edit("<b>Я слышал, что только чаты могут иметь ботов...</b>")
+
+    async def echocmd(self, message):
+        """Активировать/деактивировать Echo."""
+        echos = self.db.get("Echo", "chats", []) 
+        chatid = str(message.chat_id)
+
+        if chatid not in echos:
+            echos.append(chatid)
+            self.db.set("Echo", "chats", echos)
+            return await message.edit("<b>[Echo Mode]</b> Активирован в этом чате!")
+
+        echos.remove(chatid)
+        self.db.set("Echo", "chats", echos)
+        return await message.edit("<b>[Echo Mode]</b> Деактивирован в этом чате!")
+
+
+    async def watcher(self, message):
+        echos = self.db.get("Echo", "chats", [])
+        chatid = str(message.chat_id)
+
+        if chatid not in str(echos): return
+        if message.sender_id == (await message.client.get_me()).id: return
+
+        await message.client.send_message(int(chatid), message, reply_to=await message.get_reply_message() or message)
+
 async def get_chatinfo(event):
     chat = utils.get_args_raw(event)
     chat_info = None

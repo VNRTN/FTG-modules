@@ -5,6 +5,10 @@ import io
 import os
 from telethon.tl.functions.account import UpdateProfileRequest
 from telethon.tl.functions.users import GetFullUserRequest
+from telethon.tl.functions.photos import GetUserPhotosRequest
+from telethon.tl.functions.users import GetFullUserRequest
+from telethon.tl.types import MessageEntityMentionName
+
 def register(cb):
     cb(CuMod())
 class CuMod(loader.Module):
