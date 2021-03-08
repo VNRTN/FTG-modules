@@ -43,13 +43,10 @@ backgrouds = ["https://raw.githubusercontent.com/Fl1yd/FTG-modules/master/stuff/
 background = requests.get(f"{choice(backgrouds)}").content
 
 class ZapomniMod(loader.Module):
-	strings = {'name': 'Memes',
-			   "reply": "Reply to video!",
-			   "error": "ERROR! TRY AGAIN!!",
-			   "processing": "DataDataMoshMosh!"}
+	strings = {"name": "Memes", "reply": "Reply to video!", "error": "ERROR! TRY AGAIN!!", "processing": "DataDataMoshMosh!"}
 
     def __init__(self):
-        self.name = self.strings['name']
+        self.name = self.strings["name"]
         self._me = None
         self._ratelimit = []
 
