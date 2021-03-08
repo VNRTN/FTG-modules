@@ -3,6 +3,7 @@ from .. import loader, utils
 from asyncio import sleep
 import io
 import os
+import requests
 from telethon.tl.functions.account import UpdateProfileRequest
 from telethon.tl.functions.users import GetFullUserRequest
 from telethon.tl.functions.photos import GetUserPhotosRequest
