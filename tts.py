@@ -18,7 +18,7 @@ class TTSMod(loader.Module):
                "no_text": "Мне нечего говорить"}
 
     def __init__(self):
-        self.config = loader.ModuleConfig("TTS_LANG", "en", lambda m: self.strings("tts_lang_cfg", m))
+        self.config = loader.ModuleConfig("TTS_LANG", "ru", lambda m: self.strings("tts_lang_cfg", m))
 
     async def say(self, message, speaker, text, file=".dtts.mp3"):
         if not text:
@@ -50,7 +50,7 @@ class TTSMod(loader.Module):
 
     @loader.unrestricted
     @loader.ratelimit
-    async def ttscmd(self, message):
+    async def ttsgcmd(self, message):
         """Google voice"""
         text = utils.get_args_raw(message.message)
         if len(text) == 0:
