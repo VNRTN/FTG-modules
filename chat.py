@@ -22,7 +22,7 @@ import os
 
 logger = logging.getLogger(__name__)
 def register(cb):
-    cb(TagAllMod())
+    cb(ChatMod())
 
 def chunks(lst, n):
     for i in range(0, len(lst), n):
