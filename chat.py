@@ -28,8 +28,8 @@ def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 
-class TagAllMod(loader.Module):
-    """Тэгает всех в чате."""
+class ChatMod(loader.Module):
+    """Утилиты для чатов"""
     strings = {"name": "Chat utils"}
 
     def __init__(self):
@@ -40,7 +40,22 @@ class TagAllMod(loader.Module):
         self.client = client
         self.db = db
 
+    async def repcmd(self, message):
+        """Репорт пользователя за спам."""
+        args = utils.get_args_raw(message)
+        reply = await message.get_reply_message()
+        if args:
+            user = await message.client.get_entity(args if not args.isnumeric() else int(args))
+        if reply:
+            user = await message.client.get_entity(reply.sender_id)
+        else:
+            return await message.edit("<b>Кого я должен зарепортить?</b>")
+
+        await message.client(functions.messages.ReportSpamRequest(peer=user.id))
+        await message.edit("<b>Ты получил репорт за спам!</b>")
+
     async def statacmd(self, m):
+        """Стата по файлам в чате"""
         await m.edit("<b>Считаем...</b>")
         al = str((await m.client.get_messages(m.to_id, limit=0)).total)
         ph = str((await m.client.get_messages(m.to_id, limit=0, filter=InputMessagesFilterPhotos())).total)
@@ -67,6 +82,7 @@ class TagAllMod(loader.Module):
              "<b>Контактов:</b> {}").format(al, ph, vi, mu, vo, vv, do, urls, gifs, geos, cont))
 
     async def tagallcmd(self, message):
+        """Тэгнуть всех в чате .tagall <количество тэгов в одном сообщении (0 - все в одном)>"""
         args = utils.get_args(message)
         tag_ = 5
         notext = False
@@ -94,6 +110,7 @@ class TagAllMod(loader.Module):
             await message.client.send_message(message.to_id, "\n".join(chunk))
 
     async def chatinfocmd(self, chatinfo):
+        """Инфо о чате"""
         if chatinfo.chat:
             await chatinfo.edit("<b>Загрузка информации...</b>")
             chat = await get_chatinfo(chatinfo)
@@ -109,6 +126,7 @@ class TagAllMod(loader.Module):
             await chatinfo.edit("<b>Это не чат!</b>")
 
     async def tagcmd(self, message):
+            """Пригласить пользователя в чат .tag <текст>"""
         args = utils.get_args_raw(message).split(' ')
         tag = 'говно залупное\n                пашет.'
         try:
@@ -152,6 +170,7 @@ class TagAllMod(loader.Module):
         await message.edit(f'{msg} {m}')
 
     async def invitecmd(self, event):
+        """Пригласить пользователя в чат"""
         if event.fwd_from:
             return
         to_add_users = utils.get_args_raw(event)
@@ -269,6 +288,7 @@ class TagAllMod(loader.Module):
                         await event.edit("<b>Пользователь приглашён успешно!</b>")
 
     async def leavecmd(self, leave):
+        """Покинуть чат .leave <прощальное сообщение>"""
         reason = utils.get_args_raw(leave)
         try:
             if reason:
@@ -280,7 +300,8 @@ class TagAllMod(loader.Module):
             await leave.edit("<b>Это не чат!</b>")
             return
 
-    async def chatdumpcmd(self, message):
+    async def cdumpcmd(self, message):
+        """.cdump <n> - только юзеры с номерами <m> - в избранное <s> - тихий дамп """
         num = False
         silent = False
         tome = False
@@ -323,6 +344,7 @@ class TagAllMod(loader.Module):
                 await message.delete()
 
     async def userscmd(self, message):
+        """Количество и данные пользователей"""
         if message.chat:
             try:
                 await message.edit("<b>Считаем...</b>")
@@ -453,15 +475,66 @@ class TagAllMod(loader.Module):
         self.db.set("Echo", "chats", echos)
         return await message.edit("<b>[Echo Mode]</b> Деактивирован в этом чате!")
 
+    async def welcomecmd(self, message):
+        """Включить/выключить приветствие новых пользователей в чате. Используй: .welcome <clearall (по желанию)>."""
+        welcome = self.db.get("Welcome", "welcome", {})
+        chatid = str(message.chat_id)
+        args = utils.get_args_raw(message)
+        if args == "clearall":
+            self.db.set("Welcome", "welcome", {})
+            return await message.edit("<b>[Welcome Mode]</b> Все настройки модуля сброшены.")
+
+        if chatid in welcome:
+            welcome.pop(chatid)
+            self.db.set("Welcome", "welcome", welcome)
+            return await message.edit("<b>[Welcome Mode]</b> Деактивирован!")
+
+        welcome.setdefault(chatid, {})
+        welcome[chatid].setdefault("message", "Добро пожаловать в чат!")
+        welcome[chatid].setdefault("is_reply", False)
+        self.db.set("Welcome", "welcome", welcome)
+        await message.edit("<b>[Welcome Mode]</b> Активирован!")
+
+    async def setwelcomecmd(self, message):
+        """Установить новое приветствие новых пользователей в чате.\nИспользуй: .setwelcome <текст (можно использовать {name}; {chat})>; ничего."""
+        welcome = self.db.get("Welcome", "welcome", {})
+        args = utils.get_args_raw(message)
+        reply = await message.get_reply_message()
+        chatid = str(message.chat_id)
+        chat = await message.client.get_entity(int(chatid)) 
+        try:
+            if not args and not reply:
+                return await message.edit(f'<b>Приветствие новых пользователей в "{chat.title}":</b>\n\n'
+                                          f'<b>Статус:</b> Включено.\n'
+                                          f'<b>Приветствие:</b> {welcome[chatid]["message"]}\n\n'
+                                          f'<b>~ Установить новое приветствие можно с помощью команды:</b> .setwelcome <текст>.')
+            else:
+                if reply:
+                    welcome[chatid]["message"] = reply.id
+                    welcome[chatid]["is_reply"] = True
+                else:
+                    welcome[chatid]["message"] = args
+                    welcome[chatid]["is_reply"] = False
+                self.db.set("Welcome", "welcome", welcome)
+                return await message.edit("<b>Новое приветствие установлено успешно!</b>")
+        except KeyError: return await message.edit(f'<b>Приветствие новых пользователей в "{chat.title}":</b>\n\n'
+                                                   f'<b>Статус:</b> Отключено')
+
 
     async def watcher(self, message):
-        echos = self.db.get("Echo", "chats", [])
-        chatid = str(message.chat_id)
-
-        if chatid not in str(echos): return
-        if message.sender_id == (await message.client.get_me()).id: return
-
-        await message.client.send_message(int(chatid), message, reply_to=await message.get_reply_message() or message)
+        """Интересно, почему он именно watcher называется... 🤔"""
+        try:
+            welcome = self.db.get("Welcome", "welcome", {})
+            chatid = str(message.chat_id)
+            if chatid not in welcome: return
+            if message.user_joined or message.user_added:
+                user = await message.get_user()
+                chat = await message.get_chat()
+                if welcome[chatid]["is_reply"] == False:
+                    return await message.reply((welcome[chatid]["message"]).format(name=user.first_name, chat=chat.title))
+                msg = await self.client.get_messages(int(chatid), ids=welcome[chatid]["message"])
+                await message.reply(msg)
+        except: pass
 
 async def get_chatinfo(event):
     chat = utils.get_args_raw(event)
@@ -497,7 +570,6 @@ async def get_chatinfo(event):
             chat_info = await event.client(GetFullChannelRequest(chat))
             return chat_info
     return chat_info
-
 
 async def fetch_info(chat, event):
     chat_obj_info = await event.client.get_entity(chat.full_chat.id)
