@@ -1,6 +1,3 @@
-# requires: gtts hachoir
-
-from gtts import gTTS
 import io
 import requests
 from .. import loader, utils
@@ -18,7 +15,7 @@ class TTSMod(loader.Module):
                "no_text": "Мне нечего говорить"}
 
     def __init__(self):
-        self.config = loader.ModuleConfig("TTS_LANG", "ru", lambda m: self.strings("tts_lang_cfg", m))
+        self.config = loader.ModuleConfig("TTS_LANG", "en", lambda m: self.strings("tts_lang_cfg", m))
 
     async def say(self, message, speaker, text, file=".dtts.mp3"):
         if not text:
@@ -47,23 +44,3 @@ class TTSMod(loader.Module):
     async def ttsycmd(self, message):
         """Yandex voice"""
         await self.say(message, None, utils.get_args_raw(message))
-
-    @loader.unrestricted
-    @loader.ratelimit
-    async def ttsgcmd(self, message):
-        """Google voice"""
-        text = utils.get_args_raw(message.message)
-        if len(text) == 0:
-            if message.is_reply:
-                text = (await message.get_reply_message()).message
-            else:
-                await utils.answer(message, self.strings("tts_needs_text", message))
-                return
-
-        tts = await utils.run_sync(gTTS, text, lang=self.config["TTS_LANG"])
-        voice = BytesIO()
-        await utils.run_sync(tts.write_to_fp, voice)
-        voice.seek(0)
-        voice.name = "voice.mp3"
-
-        await utils.answer(message, voice, voice_note=True)
