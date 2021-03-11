@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class DemotivatorMod(loader.Module):
-    """Deotivators"""
+    """Demotivators"""
     strings = {
         "name": "Demotivator"
     }

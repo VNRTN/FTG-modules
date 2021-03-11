@@ -17,12 +17,12 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class DistortMod(loader.Module):
-    """Stickers or photo distort"""
+    """Дистор на фото/стикеры/анимированные стикеры"""
     strings = {"name": "Distort"}
 
     @loader.unrestricted
     async def tgscmd(self, message):
-        """Animated stickers distort"""
+        """Дисторт на анимированные стикеры"""
         reply = await message.get_reply_message()
         if not reply:
             await message.edit("Reply to animated sticker")
@@ -54,7 +54,7 @@ class DistortMod(loader.Module):
         await message.delete()
 
     async def distortcmd(self, message):
-        """Stickers or photo distort"""
+        """Дисторт на фото/стикер .distort <1-100>"""
         if message.is_reply:
             reply_message = await message.get_reply_message()
             data, mime = await check_media(reply_message)
@@ -95,7 +95,7 @@ class DistortMod(loader.Module):
         await message.delete()
 
     async def jpegdcmd(self, message):
-        """JPEG style distort"""
+        """Дисторт на JPEG"""
         if message.is_reply:
             reply_message = await message.get_reply_message()
             data = await check_media(reply_message)

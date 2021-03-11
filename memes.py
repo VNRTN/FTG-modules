@@ -405,6 +405,7 @@ class MemesMod(loader.Module):
 		else: return await message.edit("Это не картинка/стикер.")
 
 	async def vshcmd(self, m):
+		"""Видео шакал .vsh <1-6>"""
 		".vsh <реплай на видео> <уровень от 1 до 6 (по умолчанию 3)>\
 		\nСшакалить видео"
 		lvls = {
@@ -442,7 +443,7 @@ class MemesMod(loader.Module):
 			return
 
 	async def datamoshcmd(self, message):
-		""". datamosh lvl: int <reply to video>"""
+		"""Датамоооош .datamosh <1-999999>"""
 		fn = "if_you_see_it_then_delete_it"
 		reply = await message.get_reply_message()
 		if not reply:

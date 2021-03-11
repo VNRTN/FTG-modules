@@ -51,7 +51,7 @@ class TextEditorMod(loader.Module):
             reply = await message.get_reply_message()
             text = reply.raw_text
             if not text:
-                await message.edit('Тут текста нету...')
+                await message.edit('Тут текста нет...')
                 return
             change = str.maketrans(RuKeys + EnKeys, EnKeys + RuKeys)
             text = str.translate(text, change)
@@ -65,7 +65,7 @@ class TextEditorMod(loader.Module):
         else:
             text = utils.get_args_raw(message)
             if not text:
-                await message.edit('Тут текста нету...')
+                await message.edit('Тут текста нет...')
                 return
             change = str.maketrans(RuKeys + EnKeys, EnKeys + RuKeys)
             text = str.translate(text, change)
@@ -91,7 +91,7 @@ class TextEditorMod(loader.Module):
         """.mtf <reply to text>"""
         reply = await message.get_reply_message()
         if not reply or not reply.message:
-            await message.edit("<b>Reply to text!</b>")
+            await message.edit("<b>Тут текста нет...</b>")
             return
         text = bytes(reply.raw_text, "utf8")
         fname = utils.get_args_raw(message) or str(
@@ -106,7 +106,7 @@ class TextEditorMod(loader.Module):
         """.ftm <reply to file>"""
         reply = await message.get_reply_message()
         if not reply or not reply.file:
-            await message.edit("<b>Reply to file!</b>")
+            await message.edit("<b>Тут текста нет...</b>")
             return
         text = await reply.download_media(bytes)
         text = str(text, "utf8")
@@ -145,6 +145,7 @@ class TextEditorMod(loader.Module):
             return await message.edit("Это не текст.")
 
     async def litcmd(self, message):
+        """Засунуть в текст ссылку"""
         text = utils.get_args_raw(message)
         link=text.split(' ')[0]
         text=text.split(' ')[1]

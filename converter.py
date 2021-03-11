@@ -25,7 +25,7 @@ class ConverterMod(loader.Module):
 
     @loader.sudo
     async def wtpcmd(self, message):
-        """WEBP to PNG"""
+        """WEBP в PNG"""
         reply_message = await message.get_reply_message()
         image = io.BytesIO()
         await self.client.download_media(reply_message.media.document, image)
@@ -40,7 +40,7 @@ class ConverterMod(loader.Module):
 
     @loader.sudo
     async def ptwcmd(self, message):
-        """PNG to WEBP"""
+        """PNG в WEBP"""
         reply_message = await message.get_reply_message()
         image = io.BytesIO()
         await self.client.download_media(reply_message.media, image)
@@ -55,7 +55,7 @@ class ConverterMod(loader.Module):
 
     @loader.sudo
     async def jtpcmd(self, message):
-        """JPG to PNG"""
+        """JPG в PNG"""
         reply_message = await message.get_reply_message()
         image = io.BytesIO()
         await self.client.download_media(reply_message.media, image)

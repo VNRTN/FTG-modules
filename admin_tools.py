@@ -521,7 +521,7 @@ class AdminToolsMod(loader.Module):
     @loader.group_admin_delete_messages
     @loader.ratelimit
     async def purgecmd(self, message):
-        """Purge from the replied message"""
+        """Почистить все сообщения после реплая(и включая его)"""
         if not message.is_reply:
             await utils.answer(message, self.strings("from_where", message))
             return
@@ -569,7 +569,7 @@ class AdminToolsMod(loader.Module):
     @loader.group_admin_delete_messages
     @loader.ratelimit
     async def delcmd(self, message):
-        """Delete the replied message"""
+        """Удалить сообщение"""
         msgs = [message.id]
         if not message.is_reply:
             if await message.client.is_bot():
@@ -626,6 +626,7 @@ class AdminToolsMod(loader.Module):
             return await message.edit("Это не чат!")
 
     async def deltmcmd(self, m):
+        """Таймер удаления сообщения .deltm <время (в сек)>"""
         ".deltm <реплай> <секунды>\
         \nУдалить сообщение в реплае через указанное время"
         reply = await m.get_reply_message()

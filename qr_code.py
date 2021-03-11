@@ -11,7 +11,7 @@ from io import BytesIO
 
 @loader.tds
 class QRtoolsMod(loader.Module):
-    """Generator and reader of QR codes"""
+    """QRCode генератор и ридер"""
     strings = {"name": "QR Code"}
 
     @loader.owner

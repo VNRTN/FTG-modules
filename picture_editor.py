@@ -268,15 +268,15 @@ class PictureEditorMod(loader.Module):
         await m.delete()
 
     async def pic2packcmd(self, message):
-
+        """Порезать пикчу и создает стикерпак"""
         reply = await message.get_reply_message()
         if not reply:
-            await message.edit("<b>Reply to photo❗</b>")
+            await message.edit("<code>Реплай на пикчу!</code>")
             return
 
         args = utils.get_args_raw(message)
         if not args:
-            await message.edit("<b>Packname</b>❓")
+            await message.edit("<b>Название стикерпака</b>❓")
             return
         chat = '@Stickers'
         name = "".join([random.choice(list(string.ascii_lowercase + string.ascii_uppercase)) for _ in range(16)])
@@ -286,7 +286,7 @@ class PictureEditorMod(loader.Module):
         image = Image.open(image)
         w, h = image.size
         www = max(w, h)
-        await message.edit("🔪<b>Cropping...</b>")
+        await message.edit("🔪<b>Режу...</b>")
         img = Image.new("RGBA", (www, www), (0, 0, 0, 0))
         img.paste(image, ((www - w) // 2, 0))
         face = img.resize((100, 100))
@@ -295,7 +295,7 @@ class PictureEditorMod(loader.Module):
         images = await cropping(img)
         face.save(fface)
         fface.seek(0)
-        await message.edit("<b>📤Uploading...</b>")
+        await message.edit("<b>📤Загрузка...</b>")
         async with message.client.conversation(chat) as conv:
             try:
                 x = await message.client.send_message(chat, "/cancel")
@@ -332,13 +332,14 @@ class PictureEditorMod(loader.Module):
                 for part in ending.raw_text.split():
                     if part.startswith("https://t.me/"):
                         break
-                await message.edit('✅<b>Uploaded successful!</b>\n' + part)
+                await message.edit('✅<b>Загрузка завершена!</b>\n' + part)
 
             except YouBlockedUserError:
-                await message.edit('<b>@Stickers BLOCKED⛔</b>')
+                await message.edit('<b>@Stickers ЗАБЛОКИРОВАН⛔</b>')
                 return
 
     async def deepcmd(self, message):
+        """Шакал фото? .deep <1-999>"""
         try:
             frycount = int(utils.get_args(message)[0])
             if frycount < 1:
@@ -351,10 +352,10 @@ class PictureEditorMod(loader.Module):
             data = await check_media(reply_message)
 
             if isinstance(data, bool):
-                await message.edit("Reply to photo please")
+                await message.edit("<code>Реплай на пикчу!</code>")
                 return
         else:
-            await message.edit("Reply to photo please")
+            await message.edit("<code>Реплай на пикчу!</code>")
             return
 
         await message.edit("Downloading...")
@@ -374,18 +375,19 @@ class PictureEditorMod(loader.Module):
         await message.reply(file=fried_io)
 
     async def linescmd(self, message):
+        """Фото из линий"""
         reply = await message.get_reply_message()
         if not reply:
-            await message.edit("reply to photo")
+            await message.edit("<code>Реплай на пикчу!</code>")
             return
         try:
             photo = reply.media.photo
         except:
-            await message.edit("reply to photo only")
+            await message.edit("<code>Реплай на пикчу!</code>")
             return
 
         chat = '@Lines50Bot'
-        await message.edit('@Lines50Bot <code>in process...</code>')
+        await message.edit('<code>Опять работать...</code>')
         async with message.client.conversation(chat) as conv:
             try:
                 response = conv.wait_event(events.NewMessage(incoming=True, from_users=1120861844))
@@ -395,7 +397,7 @@ class PictureEditorMod(loader.Module):
                 response2 = await response2
                 await mm.delete()
             except YouBlockedUserError:
-                await message.reply('<code>Unblock</code> @Lines50Bot')
+                await message.reply('<code>Разбань</code> @Lines50Bot')
                 return
 
             await message.delete()
@@ -410,6 +412,7 @@ class PictureEditorMod(loader.Module):
             ))
 
     async def jpegdcmd(self, message):
+        """JPEGDistort?"""
         if message.is_reply:
             reply_message = await message.get_reply_message()
             data = await check_media(reply_message)
@@ -432,6 +435,7 @@ class PictureEditorMod(loader.Module):
         await message.client.send_file(message.chat_id, fried_io, reply_to=reply_message.id)
 
     async def maccmd(S, message):
+        """Мак??"""
         R = True
         Q = 'image'
         P = '/'
@@ -467,7 +471,7 @@ class PictureEditorMod(loader.Module):
         except:
             await A.edit(K);
             return
-        await A.edit('<b>Working...</b>');
+        await A.edit('<b>Опять работать...</b>');
         F, G = I.size;
         B = Image.new(L, (F, G));
         J = min(F // 100, G // 100);
@@ -500,6 +504,7 @@ class PictureEditorMod(loader.Module):
             await A.edit(file=H, text='')
 
     async def rotatecmd(self, message):
+        """Повернуть пикчу .rotate <угол>"""
         global angle
         try:
             angle = int(utils.get_args(message)[0])
@@ -511,10 +516,10 @@ class PictureEditorMod(loader.Module):
             data = await check_media(reply_message)
 
             if isinstance(data, bool):
-                await message.edit("`I can't rotate that!".upper())
+                await message.edit("<code>Реплай на пикчу или стикер!</code>".upper())
                 return
         else:
-            await message.edit("Reply to an image or sticker to rotate it!".upper())
+            await message.edit("<code>Реплай на пикчу или стикер!</code>".upper())
             return
 
         image = io.BytesIO()
@@ -534,36 +539,36 @@ class PictureEditorMod(loader.Module):
         await message.client.send_file(message.chat_id, image_stream)
 
     async def gridcmd(self, message):
-        """.gird <reply to photo>"""
+        """Порезать пикчу"""
         if message.is_reply:
             reply_message = await message.get_reply_message()
             data = await check_media(reply_message)
             if isinstance(data, bool):
-                await utils.answer(message, "<code>Реплай на пикчу или стикер блять!</code>")
+                await utils.answer(message, "<code>Реплай на пикчу или стикер!</code>")
                 return
         else:
-            await utils.answer(message, "`Реплай на пикчу или стикер блять`")
+            await utils.answer(message, "<code>Реплай на пикчу или стикер!</code>")
             return
 
-        await message.edit("Режу ебать")
+        await message.edit("Режу")
         file = await message.client.download_media(data, bytes)
         media = await griding(file)
         await message.delete()
         await message.client.send_file(message.to_id, media)
 
     async def revgridcmd(self, message):
-        """.gird <reply to photo>"""
+        """Порезать пикчу в обратном порядке"""
         if message.is_reply:
             reply_message = await message.get_reply_message()
             data = await check_media(reply_message)
             if isinstance(data, bool):
-                await utils.answer(message, "<code>Реплай на пикчу или стикер блять!</code>")
+                await utils.answer(message, "<code>Реплай на пикчу или стикер!</code>")
                 return
         else:
-            await utils.answer(message, "`Реплай на пикчу или стикер блять`")
+            await utils.answer(message, "<code>Реплай на пикчу или стикер!</code>")
             return
 
-        await message.edit("Режу ебать")
+        await message.edit("Режу")
         file = await message.client.download_media(data, bytes)
         media = await griding(file)
         media = media[::-1]
@@ -571,6 +576,7 @@ class PictureEditorMod(loader.Module):
         await message.client.send_file(message.to_id, media)
 
     async def opscmd(self, message):
+        """Отразить фотку .ops <m и/или f> m - по вертикали f - по горизонтали"""
         way = utils.get_args(message)
         if not way:
             return
@@ -579,10 +585,10 @@ class PictureEditorMod(loader.Module):
             data = await check_media(reply_message)
 
             if isinstance(data, bool):
-                await message.edit("`I can't ops that!".upper())
+                await message.edit("Реплай на фотку или стикер!".upper())
                 return
         else:
-            await message.edit("Reply to an image or sticker to ops it!".upper())
+            await message.edit("Реплай на фотку или стикер!".upper())
             return
 
         image = io.BytesIO()
@@ -611,16 +617,17 @@ class PictureEditorMod(loader.Module):
 
     @loader.sudo
     async def spincmd(self, message):
+        """Вертел твою пикчу"""
         args = utils.get_args(message)
 
         if message.is_reply:
             reply_message = await message.get_reply_message()
             data = await check_media(reply_message)
             if isinstance(data, bool):
-                await utils.answer(message, "Reply to picture")
+                await utils.answer(message, "Реплай на фотку")
                 return
         else:
-            await utils.answer(message, "Reply to picture")
+            await utils.answer(message, "Реплай на фотку")
             return
 
         image = io.BytesIO()
@@ -645,16 +652,17 @@ class PictureEditorMod(loader.Module):
 
     @loader.sudo
     async def epilepsycmd(self, message):
+        """Буууааа"""
         args = utils.get_args(message)
 
         if message.is_reply:
             reply_message = await message.get_reply_message()
             data = await check_media(reply_message)
             if isinstance(data, bool):
-                await utils.answer(message, "Reply to picture")
+                await utils.answer(message, "Реплай на фотку")
                 return
         else:
-            await utils.answer(message, "Reply to picture")
+            await utils.answer(message, "Реплай на фотку")
             return
 
         image = io.BytesIO()
@@ -669,20 +677,21 @@ class PictureEditorMod(loader.Module):
         await utils.answer(message, image_stream)
 
     async def resizecmd(self, message):
+        """Изменить размеры фотки .resize <x> или <x y> через пробел!!"""
         if message.is_reply:
             reply_message = await message.get_reply_message()
             data = await check_media(reply_message)
 
             if isinstance(data, bool):
-                await message.edit("`I can't resize that!".upper())
+                await message.edit("Реплай на фото или стикер!".upper())
                 return
         else:
-            await message.edit("Reply to an image or sticker to resize it!".upper())
+            await message.edit("Реплай на фото или стикер!".upper())
             return
         uinp = utils.get_args(message)
 
         if not uinp:
-            await message.edit("What's about input".upper())
+            await message.edit("Введи значение после команды!".upper())
             return
         image = io.BytesIO()
         await message.client.download_media(data, image)
@@ -698,7 +707,7 @@ class PictureEditorMod(loader.Module):
                 if uinp[0] == "y":
                     rx, ry = y, y
                 else:
-                    await message.edit("INPUT MUST BE STING")
+                    await message.edit("Введи значиние(цифру) после команды!")
                     return
         else:
             if uinp[0] == "x":
@@ -735,39 +744,40 @@ class PictureEditorMod(loader.Module):
         await message.client.send_file(message.chat_id, image_stream)
 
     async def sl2rcmd(self, message):
-        """swipe left to right"""
+        """Свайп лево-право"""
         await presser(message, 0)
 
     @loader.owner
     async def sr2lcmd(self, message):
-        """swipe right to left"""
+        """Свайп право-лево"""
         await presser(message, 1)
 
     @loader.owner
     async def su2dcmd(self, message):
-        """swipe up to down"""
+        """Свайп верх-низ"""
         await presser(message, 2)
 
     @loader.owner
     async def sd2ucmd(self, message):
-        """swipe down to up"""
+        """Свайп низ-верх"""
         await presser(message, 3)
 
     async def resizedoccmd(self, message):
+        """Изменить размеры фотки и отправить как документ .resizedoc <x> или <x y> через пробел!!"""
         if message.is_reply:
             reply_message = await message.get_reply_message()
             data = await check_media(reply_message)
 
             if isinstance(data, bool):
-                await message.edit("`I can't resize that!".upper())
+                await message.edit("Реплай на фото или стикер!".upper())
                 return
         else:
-            await message.edit("Reply to an image or sticker to resize it!".upper())
+            await message.edit("Реплай на фото или стикер!".upper())
             return
         uinp = utils.get_args(message)
 
         if not uinp:
-            await message.edit("What's about input".upper())
+            await message.edit("Введи значение после команды!".upper())
             return
         image = io.BytesIO()
         await message.client.download_media(data, image)
@@ -783,7 +793,7 @@ class PictureEditorMod(loader.Module):
                 if uinp[0] == "y":
                     rx, ry = y, y
                 else:
-                    await message.edit("INPUT MUST BE STING")
+                    await message.edit("Введи значиние(цифру) после команды!")
                     return
         else:
             if uinp[0] == "x":
@@ -821,20 +831,21 @@ class PictureEditorMod(loader.Module):
 
     @loader.unrestricted
     async def dotifycmd(self, message):
-        """Image to RGB dots"""
+        """Цветные точкиии"""
         mode = False
         reply, pix = await parse(message)
         if reply:
             await dotify(message, reply, pix, mode)
 
     async def dotificmd(self, message):
-        """Image to BW dots """
+        """Черно-белые точкиии"""
         mode = True
         reply, pix = await parse(message)
         if reply:
             await dotify(message, reply, pix, mode)
 
     async def soapcmd(self, message):
+        """Мыло .soap <процент мыла>"""
         soap = 3
         a = utils.get_args(message)
         if a:
@@ -847,13 +858,13 @@ class PictureEditorMod(loader.Module):
             reply_message = await message.get_reply_message()
             data = await check_media(reply_message)
             if isinstance(data, bool):
-                await utils.answer(message, "<code>Reply to pic or stick!</code>")
+                await utils.answer(message, "<code>Реплай на фотку или стикер!</code>")
                 return
         else:
-            await utils.answer(message, "<code>Reply to pic or stick!</code>")
+            await utils.answer(message, "<code>Реплай на фотку или стикер!</code>")
             return
 
-        await message.edit("Soaping...")
+        await message.edit("Намыливаю...")
         file = await message.client.download_media(data, bytes)
         media = await Soaping(file, soap)
         await message.delete()
@@ -861,6 +872,7 @@ class PictureEditorMod(loader.Module):
         await message.client.send_file(message.to_id, media)
 
     async def crosscmd(self, message):
+        """Крест на фотку"""
         reply = await message.get_reply_message()
         if not reply:
             await message.edit("<b>А что зачеркнуть?</b>")

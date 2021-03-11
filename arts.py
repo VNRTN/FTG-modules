@@ -437,28 +437,6 @@ class ArtsMod(loader.Module):
             huy = huy.replace('🍆', emoji)
         await message.edit(huy)
 
-
-    async def impscmd(self, message):
-        """Используй .imps <@ или реплай>."""
-        reply = await message.get_reply_message()
-        args = utils.get_args_raw(message)
-        if not args and not reply:
-            user = await message.client.get_me()
-        if reply:
-            user = await utils.get_user(await message.get_reply_message())
-        if args:
-            user = await message.client.get_entity(args)
-        imps = ['wasn`t the impostor', 'was the impostor']
-        imp = ("<code>.      　。　　　　•　    　ﾟ　　.      .     。\n"
-               "　　.　　　.　　　  .　　　.　　　　　。　　   。　   .\n"
-               "　.　　      。        ඞ   。　    .     　.　      •      .\n"
-               f"•     {user.first_name} {choice(imps)} 。　   .\n"
-               f"　 。     {randint(1, 5)} impostor(s) remains.　　　.　 　.\n"
-               ",　　　　.　 .　　       .        •   •    。.\n"
-               "。  •　   .   　ﾟ 　  •  　ﾟ .        .    　.</code>")
-        await message.edit(imp)
-
-
     async def fcmd(self, message):
         """Используй .f"""
         r = random.randint(0, 6)
@@ -534,7 +512,8 @@ class ArtsMod(loader.Module):
 
 
     async def heartscmd(self, message):
-        for _ in range(10):
+        """Меняющиеся сердечки"""
+        for _ in range(5):
             for heart in ['❤', '️🧡', '💛', '💚', '💙', '💜']:
                 await message.edit(heart)
                 await sleep(0.6)

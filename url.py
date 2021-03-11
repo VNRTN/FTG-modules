@@ -72,7 +72,7 @@ class URlMod(loader.Module):
             long_url = reply.raw_text
         else:
             long_url = m_text
-        await utils.answer(message, "Creating...")
+        await utils.answer(message, "Делаю...")
         fetcher = post(
             'https://clck.ru/--?url=' +
             long_url).text
