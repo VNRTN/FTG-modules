@@ -47,8 +47,8 @@ class StickersMod(loader.Module):
                                           lambda m: self.strings("default_sticker_emoji_cfg_doc", m))
         self._lock = asyncio.Lock()
 
-    async def kangcmd(self, message):
-    """Добавить в пак"""
+    async def kangcmd(self, message)
+    """Добавить стикер/фото в пак"""
         args = utils.get_args(message)
         if len(args) not in (1, 2):
             logger.debug("wrong args len(%s) or bad args(%s)", len(args), args)
