@@ -11,9 +11,9 @@ from telethon.tl.functions.users import GetFullUserRequest
 from telethon.tl.types import MessageEntityMentionName
 
 def register(cb):
-    cb(CuMod())
-class CuMod(loader.Module):
-    """Полное копирование юзера(ава, имя|фамилия, био)"""
+    cb(UserUtilsMod())
+class UserUtilsMod(loader.Module):
+    """Всякие приколы с юзерами"""
     strings = {
     'name': 'User utils', 
     'check': '<b>[CheckerAPI]</b> Делаем запрос к API...', 
@@ -81,7 +81,7 @@ class CuMod(loader.Module):
         if not s: await message.edit("Аккаунт клонирован! [100%]\n[##########]")
         if not s: await sleep(5)
         if not s: await message.edit("Аккаунт клонирован!")
-        
+
     async def checkcmd(self, m):
         """ Проверить id на слитый номер
         Жуёт либо <reply> либо <uid>
@@ -93,7 +93,20 @@ class CuMod(loader.Module):
             except: return await m.edit("<b>Err</b>")    
         else: return await m.edit("[CheckerAPI] А кого чекать?")
         await m.edit(self.strings['check'])
-        r = requests.get('http://d4n13l3k00.ml/api/checkTgId?uid=' + user).json()
+        r = requests.get('https://api.d4n13l3k00.ml/checkTgId?uid=' + user).json()
+        await m.edit(self.strings['response'].format(r['data'], str(round(r['time'], 3))+"ms"))
+    async def rcheckcmd(self, m):
+        """ Обратный поиск
+        Жуёт <phone number>
+        """
+        reply = await m.get_reply_message()
+        if utils.get_args_raw(m): phone = utils.get_args_raw(m)
+        elif reply:
+            try: phone = reply.raw_text
+            except: return await m.edit("<b>Err</b>")    
+        else: return await m.edit("[CheckerAPI] А кого чекать?")
+        await m.edit(self.strings['check'])
+        r = requests.get('https://api.d4n13l3k00.ml/checkTgId?r=1&uid=' + phone).json()
         await m.edit(self.strings['response'].format(r['data'], str(round(r['time'], 3))+"ms"))
 
     async def userinfocmd(self, whos):
