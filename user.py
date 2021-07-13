@@ -87,26 +87,37 @@ class UserUtilsMod(loader.Module):
         Жуёт либо <reply> либо <uid>
         """
         reply = await m.get_reply_message()
-        if utils.get_args_raw(m): user = utils.get_args_raw(m)
+        if utils.get_args_raw(m):
+            user = utils.get_args_raw(m)
         elif reply:
-            try: user = str(reply.sender.id)
-            except: return await m.edit("<b>Err</b>")    
-        else: return await m.edit("[CheckerAPI] А кого чекать?")
+            try:
+                user = str(reply.sender.id)
+            except:
+                return await m.edit("<b>Err</b>")
+        else:
+            return await m.edit("[CheckerAPI] А кого чекать?")
         await m.edit(self.strings['check'])
-        r = requests.get('https://api.d4n13l3k00.ml/checkTgId?uid=' + user).json()
+        r = requests.get(
+            'https://api.d4n13l3k00.ru/checkTgId?uid=' + user).json()
         await m.edit(self.strings['response'].format(r['data'], str(round(r['time'], 3))+"ms"))
+
     async def rcheckcmd(self, m):
         """ Обратный поиск
         Жуёт <phone number>
         """
         reply = await m.get_reply_message()
-        if utils.get_args_raw(m): phone = utils.get_args_raw(m)
+        if utils.get_args_raw(m):
+            phone = utils.get_args_raw(m)
         elif reply:
-            try: phone = reply.raw_text
-            except: return await m.edit("<b>Err</b>")    
-        else: return await m.edit("[CheckerAPI] А кого чекать?")
+            try:
+                phone = reply.raw_text
+            except:
+                return await m.edit("<b>Err</b>")
+        else:
+            return await m.edit("[CheckerAPI] А кого чекать?")
         await m.edit(self.strings['check'])
-        r = requests.get('https://api.d4n13l3k00.ml/checkTgId?r=1&uid=' + phone).json()
+        r = requests.get(
+            'https://api.d4n13l3k00.ru/checkTgId?r=1&uid=' + phone).json()
         await m.edit(self.strings['response'].format(r['data'], str(round(r['time'], 3))+"ms"))
 
     async def userinfocmd(self, whos):
